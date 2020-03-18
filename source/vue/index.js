@@ -3,6 +3,7 @@
  * @Date: 2020-03-18 21:07
  */
 import {initState} from "./observe";
+import Watcher from "./observe/watcher";
 
 // todo 写成了构造函数
 function Vue(options) {
@@ -16,6 +17,78 @@ Vue.prototype._init = function (options) {
 
   // mvvm原理 需要将数据重新初始化
   initState(vm)
+
+  if (vm.$options.el) {
+    vm.$mount()
+  }
+}
+
+function query(el) {
+  if (typeof el === 'string') {
+    return document.querySelector(el)
+  }
+  return el
+}
+
+const defaultRE = /{{((?:.|\r?\n)+?)}}/g
+const util = {
+  getValue(vm, expr) {
+    let keys = expr.split('.')
+    return keys.reduce((memo, current) => {
+      memo = memo[current]
+      return memo
+    }, vm)
+  },
+  compilerText(node, vm) {
+    node.textContent = node.textContent.replace(defaultRE, function (...args) {
+      return util.getValue(vm, args[1])
+    })
+  }
+}
+
+function compiler(node, vm) {
+  let childNodes = node.childNodes;
+  // 将类数组转换为树组
+  [...childNodes].forEach(child => {
+    // 1是元素 3是文本
+    if (child.nodeType === 1) {
+    } else if(child.nodeType === 3) {
+      util.compilerText(child, vm)
+    }
+  })
+}
+
+Vue.prototype._update = function () {
+  // todo 用用户传入的数据去更新视图
+
+  let vm = this
+  let el = vm.$el
+
+  // todo 模板编译
+  // 不要直接替换dom 可以先做一个文档碎片 为了操作内存里的dom 最后再替换到页面上
+  let node = document.createDocumentFragment()
+  let firstChild
+  while (firstChild = el.firstChild) {
+    // todo appendChild 具有移动的功能
+    node.appendChild(firstChild)
+  }
+
+  compiler(node, vm)
+
+  // todo 在中间对文本进行编译替换
+  el.appendChild(node)
+}
+
+Vue.prototype.$mount = function () {
+  let vm = this
+  let el = vm.$options.el
+  el = vm.$el = query(el)
+
+  // 渲染是通过watcher渲染的：渲染watcher、
+  let updateComponent = () => { // 更新、渲染的逻辑
+    vm._update()
+  }
+  new Watcher(vm, updateComponent) // 渲染watcher
 }
 
 

@@ -9,7 +9,7 @@ let vm = new Vue({
   data() {
     return {
       // Object.defineProperty()
-      msg: 'hello',
+      msg: 'hello zbw',
       school: {
         name: 'zf'
       },
@@ -32,6 +32,6 @@ let vm = new Vue({
 // console.log(vm.arr[3].name)
 
 // 对数组对象本身  数组里的每一项也需要观测
-console.log(vm.arr[0]['name'] = 'ls')
+// console.log(vm.arr[0]['name'] = 'ls')
 
 // todo 监控的两个缺点：不能对数组的索引监控 / length--不能对length进行监控 我们是观测不到的
