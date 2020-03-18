@@ -4,6 +4,7 @@
  */
 
 import {observe} from "./index";
+import {arrayMethods, observerArray} from "./array";
 
 export function defineReactive(data, key, value) {
 
@@ -15,8 +16,9 @@ export function defineReactive(data, key, value) {
       return value
     },
     set(newValue) {
-      console.log('设置数据')
       if (newValue === value) return
+      console.log('设置数据')
+      observe(newValue)
       value = newValue
     }
   })
@@ -24,7 +26,19 @@ export function defineReactive(data, key, value) {
 
 class Observer {
   constructor(data) {
-    this.walk(data)
+
+
+    if(Array.isArray(data)) {
+      // todo 如果是数组  对新增项、原有项是对象的进行观察
+      // todo 通过改变data上数组对象的原型链  使在vue实例上声明的数组属性被劫持 只有传入的数据需要被劫持
+      data.__proto__ = arrayMethods
+
+      // 对数组现有的每一项观测
+      observerArray(data)
+    } else {
+      // 如果是对象的话
+      this.walk(data)
+    }
   }
 
   walk(data) {
