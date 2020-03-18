@@ -1,56 +1,27 @@
-function Vue (option) {
-  this._data = option.data
-  observe(this._data)
-  new Watcher()
-  /* 在这里模拟render的过程，为了触发test属性的get函数 */
-  console.log('初始化渲染组件', this._data.name);
-}
+/*
+ * @Author: zbw
+ * @Date: 2020-03-18 20:59
+ */
+import Vue from 'vue'
 
-function observe(data) {
-  Object.keys(data).forEach(key => defineReactive(data, key, data[key]))
-}
-
-function defineReactive(obj, key ,value) {
-  const dep = new Dep()
-  Object.defineProperty(obj, key, {
-    enumerable: true,
-    configurable: true,
-    get: function reactiveGetter() {
-      dep.addSub(Dep.target)
-      return value
-    },
-    set: function reactiveSetter(newValue) {
-      if (newValue === value) return
-      value = newValue
-      dep.notify()
-      // cb(newValue)
+let vm = new Vue({
+  el: '#app',
+  data() {
+    return {
+      // Object.defineProperty()
+      msg: 'hello',
+      school: {
+        name: 'zf'
+      },
+      arr: [1,2,3]
     }
-  })
-}
+  },
+  computed: {
+  },
+  watch: {
+  }
+})
 
-// function cb(newValue) {
-//   console.log('视图更新')
-// }
-
-class Dep {
-  constructor() {
-    this.subs = []
-  }
-  addSub(sub) {
-    this.subs.push(sub)
-  }
-  notify() {
-    console.log(this.subs)
-    this.subs.forEach(sub => sub.update())
-  }
-}
-Dep.target = null
-
-class Watcher {
-  constructor() {
-    Dep.target = this
-  }
-  update() {
-    console.log('视图更新啦')
-  }
-}
+// 代理
+// console.log(vm._data.msg)
+console.log(vm.msg)
