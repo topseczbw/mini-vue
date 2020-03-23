@@ -84,9 +84,40 @@ function queueWatcher(watcher) {
     queue.push(watcher)
 
     // 延迟清空队列
-    setTimeout(flushQueue, 0)
-    // nextTick()
+    // 再此之前  先将 vm 属性修改操作都存起来 使用宏任务 延迟触发
+    nextTick(flushQueue)
   }
+}
+
+// todo 注意：由于支持用户使用 Vue.nextTick(() => {}) 在回调函数中 操作dom，所以我们需要把用户传入的操作dom的回调放在 flushQueue 之后执行 所以还需要一个callbacks
+let callbacks = []
+function flushCallbacks() {
+  callbacks.forEach(cb => cb())
+}
+function nextTick(cb) {
+  callbacks.push(cb)
+
+  // 要异步刷新这个callbacks。所以需要获取一个异步方法  4步
+  // 微任务：promise  mutationObserver    宏任务：setImmediate setTimeout
+  let timeFunc = () => {
+    flushCallbacks()
+  }
+  if (Promise) {
+    return Promise.resolve().then(timeFunc)
+  }
+  if (MutationObserver) {
+    let observer = new MutationObserver(timeFunc)
+    let textNode = document.createTextNode(1)
+    observer.observe(textNode, {characterData: true})
+    // 触发dom节点修改  触发timeFunc
+    textNode.textContent = 2
+    return
+  }
+  // IE支持
+  if (setImmediate) {
+    return setImmediate(timeFunc)
+  }
+  setTimeout(timeFunc, 0)
 }
 
 
