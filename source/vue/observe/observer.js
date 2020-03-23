@@ -24,12 +24,12 @@ export function defineReactive(data, key, value) {
         // 已删除
         // dep.addSub(Dep.target)
       }
-      console.log('获取数据')
+      console.log('获取数据，【渲染dom，更新试图】')
       return value
     },
     set(newValue) {
       if (newValue === value) return
-      console.log('设置数据')
+      console.log('设置数据  设置vm属性')
       observe(newValue)
       value = newValue
 

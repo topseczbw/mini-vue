@@ -20,9 +20,10 @@ let vm = new Vue({
   watch: {}
 })
 
-setTimeout(() => {
-  vm.msg = '欢迎你'
-}, 1000)
+// setTimeout(() => {
+//
+// }, 1000)
+
 
 // 代理
 // console.log(vm._data.msg)
@@ -39,3 +40,11 @@ setTimeout(() => {
 // console.log(vm.arr[0]['name'] = 'ls')
 
 // todo 监控的两个缺点：不能对数组的索引监控 / length--不能对length进行监控 我们是观测不到的
+
+
+// todo 【批量】【异步】更新
+vm.msg = '你好1'   // dep   [渲染watcher]
+vm.msg = '你好2'   // dep   [渲染watcher]
+vm.msg = '你好3'   // dep   [渲染watcher]
+// vm.school.name = '北京'   // dep   [渲染watcher]
+// 如果是同步的话  只要改值会不停的重复调  同一个watcher

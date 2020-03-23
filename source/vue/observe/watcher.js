@@ -56,7 +56,36 @@ class Watcher {
   }
 
   update() {
+    // 不要立即去调
+    // this.get()
+
+    queueWatcher(this)
+  }
+
+  run() {
     this.get()
+  }
+}
+
+let has = {}
+let queue = []
+// 清空watcher队列
+function flushQueue() {
+  queue.forEach(watcher => watcher.run())
+
+  has = {}
+  queue = []
+}
+function queueWatcher(watcher) {
+  let id = watcher.id
+  if (has[id] == null) {
+    has[id] = true
+    // 批量
+    queue.push(watcher)
+
+    // 延迟清空队列
+    setTimeout(flushQueue, 0)
+    // nextTick()
   }
 }
 
