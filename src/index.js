@@ -13,12 +13,16 @@ let vm = new Vue({
       school: {
         name: 'zf'
       },
-      arr: [{name: 'zbw'}, 2, 3]
+      arr: [{name: 'zbw'}, 2, 4]
     }
   },
   computed: {},
   watch: {}
 })
+
+setTimeout(() => {
+  vm.msg = '欢迎你'
+}, 1000)
 
 // 代理
 // console.log(vm._data.msg)

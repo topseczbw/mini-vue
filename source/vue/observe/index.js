@@ -5,7 +5,6 @@
 
 // 状态：data computed watch
 import Observer from "./observer";
-
 export function initState(vm) {
   let options = vm.$options
 
@@ -36,6 +35,7 @@ function initData(vm) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function' ? data.call(vm) : data || {}
 
+  // 代理 目的改为从vm上直接取值
   for(let key in data) {
     if (data.hasOwnProperty(key)) {
       proxy(vm, '_data', key)

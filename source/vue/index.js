@@ -40,7 +40,12 @@ const util = {
     }, vm)
   },
   compilerText(node, vm) {
-    node.textContent = node.textContent.replace(defaultRE, function (...args) {
+    // todo 注意：当修改vm属性 再次编译文本时，此时{{}}中的已经是vm属性的值，而不是vm的key
+    // 为节点增加一个自定义属性，缓存用户在模板中的写的初始文本 即vm属性的key
+    if (!node.expr) {
+      node.expr = node.textContent
+    }
+    node.textContent = node.expr.replace(defaultRE, function (...args) {
       return util.getValue(vm, args[1])
     })
   }
@@ -64,15 +69,19 @@ Vue.prototype._update = function () {
   let vm = this
   let el = vm.$el
 
-  // todo 模板编译
+  // todo 创建文档碎片
   // 不要直接替换dom 可以先做一个文档碎片 为了操作内存里的dom 最后再替换到页面上
   let node = document.createDocumentFragment()
   let firstChild
   while (firstChild = el.firstChild) {
-    // todo appendChild 具有移动的功能
+    // appendChild 具有移动的功能
     node.appendChild(firstChild)
   }
 
+  /*
+   * todo 编译节点
+   * 如果是文本节点，则获取{{value}}中value，在vm上寻找对应的值替换，完成文本节点的编译
+   */
   compiler(node, vm)
 
   // todo 在中间对文本进行编译替换
@@ -89,6 +98,8 @@ Vue.prototype.$mount = function () {
     vm._update()
   }
   new Watcher(vm, updateComponent) // 渲染watcher
+
+  // 数据修改后需要更新
 }
 
 
