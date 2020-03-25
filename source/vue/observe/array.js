@@ -27,7 +27,7 @@ methods.forEach(method => {
   arrayMethods[method] = function (...args) {
     let result = oldArrayProtoMethods[method].apply(this, args)
 
-    console.log('调用了数组劫持')
+    // console.log(`调用了数组劫持的方法${method}`)
 
     let inserted
     switch (method) {
@@ -45,6 +45,10 @@ methods.forEach(method => {
       observerArray(inserted)
     }
 
+    console.log('调用了数组更新的方法， 更新视图')
+    // 只是通知dep中的watcher  更新视图
+    // 【source/vue/observe/observer.js:53】
+    this.__ob__.dep.notify()
     return result
   }
 })

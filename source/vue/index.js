@@ -46,7 +46,7 @@ const util = {
       node.expr = node.textContent
     }
     node.textContent = node.expr.replace(defaultRE, function (...args) {
-      return util.getValue(vm, args[1])
+      return JSON.stringify(util.getValue(vm, args[1]))
     })
   }
 }
