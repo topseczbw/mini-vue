@@ -31,7 +31,7 @@ function query(el) {
 }
 
 const defaultRE = /{{((?:.|\r?\n)+?)}}/g
-const util = {
+export const util = {
   getValue(vm, expr) {
     let keys = expr.split('.')
     return keys.reduce((memo, current) => {
@@ -102,5 +102,13 @@ Vue.prototype.$mount = function () {
   // 数据修改后需要更新
 }
 
+
+Vue.prototype.$watch = function (key, handler) {
+  // 原理也是创建一个watcher
+  new Watcher(this, key, handler, {
+    // 用户自己定义的watcher
+    user: true
+  })
+}
 
 export default Vue

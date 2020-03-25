@@ -19,7 +19,12 @@ let vm = new Vue({
     }
   },
   computed: {},
-  watch: {}
+  watch: {
+    msg(newValue, oldValue) {
+      console.log(newValue)
+      console.log(oldValue)
+    }
+  }
 })
 
 // setTimeout(() => {
@@ -64,6 +69,11 @@ setTimeout(() => {
   // vm.list.push(4)
 
   // todo 递归收集儿子的依赖
-  vm.list2[0].push(2)
+  // vm.list2[0].push(2)
   //
 }, 500)
+
+
+
+// watch
+vm.msg = 'hahaha'

@@ -5,6 +5,7 @@
 
 import {popTarget, pushTarget} from "./dep";
 import {observe} from "./index";
+import {util} from "../index";
 
 let id = 0
 
@@ -22,6 +23,15 @@ class Watcher {
     this.exprOrFn = exprOrFn
     if (typeof exprOrFn === 'function') {
       this.getter = exprOrFn
+    } else {
+      // 如果不是函数  我就把表达式变成函数
+      this.getter = function () {
+        return util.getValue(vm, exprOrFn)
+      }
+    }
+
+    if (opts.user) {
+      this.user = opts.user
     }
     this.cb = cb
     this.opts = opts
@@ -30,7 +40,9 @@ class Watcher {
     this.deps = []
     this.depsId = new Set()
 
-    this.get()
+    // todo 创建watcher的时候  我们先把表达式的值取出来 （老值）
+    // todo 同时 会把网点 watcher 回调 加入该属性的 dep中 成为 除了渲染 watcher 外的第二个watcher
+    this.value = this.get()
   }
 
   get() {
@@ -38,9 +50,11 @@ class Watcher {
     // 目的是 在下面调用 this.getter() 方法时 会取实例上的属性渲染dom  此时属性的getter方法能找到这个watcher
     // source/vue/observe/observer.js:17
     pushTarget(this)
-    this.getter()
+    let value = this.getter()
     // 移除 Dep.target 对应属性 getter 方法中的 【source/vue/observe/observer.js:19】 放置多次收集同一个依赖（watcher）
     popTarget()
+
+    return value
   }
 
   addDep(dep) {
@@ -63,7 +77,12 @@ class Watcher {
   }
 
   run() {
-    this.get()
+    // 获取执行后的新值
+    let value = this.get()
+
+    if (this.value !== value) {
+      this.cb(value, this.value)
+    }
   }
 }
 
