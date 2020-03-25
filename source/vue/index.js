@@ -103,11 +103,12 @@ Vue.prototype.$mount = function () {
 }
 
 
-Vue.prototype.$watch = function (key, handler) {
+Vue.prototype.$watch = function (key, handler, opts) {
   // 原理也是创建一个watcher
   new Watcher(this, key, handler, {
     // 用户自己定义的watcher
-    user: true
+    user: true,
+    ...opts
   })
 }
 

@@ -37,12 +37,20 @@ class Watcher {
     this.opts = opts
     this.id = id++
 
+    this.immediate = opts.immediate
+
     this.deps = []
     this.depsId = new Set()
 
     // todo 创建watcher的时候  我们先把表达式的值取出来 （老值）
     // todo 同时 会把网点 watcher 回调 加入该属性的 dep中 成为 除了渲染 watcher 外的第二个watcher
     this.value = this.get()
+
+
+    // todo 如果有immediate 就直接执行用户定义的函数
+    if (this.immediate) {
+      this.cb(this.value)
+    }
   }
 
   get() {
