@@ -3,35 +3,41 @@
  * @Date: 2020-03-18 20:59
  */
 import Vue from 'vue'
+import {h} from "../source/vue/vdom/h";
+import {render} from "../source/vue/vdom";
 
-let vm = new Vue({
-  el: '#app',
-  data() {
-    return {
-      // Object.defineProperty()
-      msg: 'hello zbw',
-      school: {
-        name: 'zf'
-      },
-      arr: [{name: 'zbw'}, 2, 4],
-      list: [1,2,3],
-      list2: [[1],2,3]
-    }
-  },
-  computed: {},
-  watch: {
-    // msg(newValue, oldValue) {
-    //   console.log(newValue)
-    //   console.log(oldValue)
-    // },
-    msg: {
-      handler: (newValue, oldValue) => {
-        console.log(newValue, oldValue)
-      },
-      immediate: true
-    }
-  }
-})
+// let vm = new Vue({
+//   el: '#app',
+//   data() {
+//     return {
+//       // Object.defineProperty()
+//       msg: 'hello',
+//       school: {
+//         name: 'zf'
+//       },
+//       arr: [{name: 'zbw'}, 2, 4],
+//       list: [1,2,3],
+//       list2: [[1],2,3]
+//     }
+//   },
+//   computed: {
+//     fullName() {
+//       return `${this.msg} world`
+//     }
+//   },
+//   watch: {
+//     msg(newValue, oldValue) {
+//       console.log(newValue)
+//       console.log(oldValue)
+//     },
+//     msg: {
+//       handler: (newValue, oldValue) => {
+//         console.log(newValue, oldValue)
+//       },
+//       immediate: true
+//     }
+//   }
+// })
 
 // setTimeout(() => {
 //
@@ -82,4 +88,27 @@ setTimeout(() => {
 
 
 // watch
-vm.msg = 'hahaha'
+// vm.msg = 'hahaha'
+
+
+// computed
+// 更改计算属性
+// 为什么不会立即刷新 因为当前msg属性只有一个watcher是计算属性watcher  因为页面里并没有对msg渲染，所以没有渲染watcher
+setTimeout(() => {
+  // vm.msg = '修改后'
+}, 1000)
+
+
+
+// todo 虚拟dom
+
+
+
+let oldVnode = h('div', {id: 'container', key: 1},
+  h('span', {style: { color: 'red'}}, 'hello'),
+  'zf'
+)
+let container = document.getElementById('app')
+
+// console.log(oldVnode)
+render(oldVnode, container)

@@ -17,6 +17,8 @@ class Watcher {
    * @param cb 用户传入的回调方法 如 watch
    * @param opts 其他参数
    */
+
+  // vm , () => {return `${this.msg} world`} , () => {}, {lazy: true}
   constructor(vm, exprOrFn, cb = () => {
   }, opts = {}) {
     this.vm = vm
@@ -33,6 +35,10 @@ class Watcher {
     if (opts.user) {
       this.user = opts.user
     }
+    // 如果这个值为true 说明他是计算属性
+    this.lazy = opts.lazy
+    // 用这个属性去做缓存
+    this.dirty = this.lazy
     this.cb = cb
     this.opts = opts
     this.id = id++
@@ -44,7 +50,8 @@ class Watcher {
 
     // todo 创建watcher的时候  我们先把表达式的值取出来 （老值）
     // todo 同时 会把网点 watcher 回调 加入该属性的 dep中 成为 除了渲染 watcher 外的第二个watcher
-    this.value = this.get()
+    // 如果当前是计算属性的话  不会默认调用get方法 即第一次不会走，什么时候在页面（模板）中用他的时候 才会走
+    this.value = this.lazy ? undefined : this.get()
 
 
     // todo 如果有immediate 就直接执行用户定义的函数
@@ -58,11 +65,23 @@ class Watcher {
     // 目的是 在下面调用 this.getter() 方法时 会取实例上的属性渲染dom  此时属性的getter方法能找到这个watcher
     // source/vue/observe/observer.js:17
     pushTarget(this)
-    let value = this.getter()
+    // 【source/vue/observe/index.js:89】 编译模板时 也会走到computed的方法
+    // todo 函数调用时，计算属性函数用到的实例属性就会将计算属性watcher存起来
+    // let value = this.getter()
+    let value = this.getter.call(this.vm)
     // 移除 Dep.target 对应属性 getter 方法中的 【source/vue/observe/observer.js:19】 放置多次收集同一个依赖（watcher）
     popTarget()
 
     return value
+  }
+
+  evaluate() {
+    // 将计算属性的watcher 放到了stack中
+    this.value = this.get()
+    // 值求过了  下次渲染的时候不用球了
+    // 什么时候需要再求呢 ？  source/vue/observe/watcher.js:110
+    // 计算属性的值变化了  稍微取值时 在取即可
+    this.dirty = false
   }
 
   addDep(dep) {
@@ -71,9 +90,16 @@ class Watcher {
     let id = dep.id
     if (!this.depsId.has(id)) {
       this.depsId.add(id)
-      this.deps.push(id)
+      this.deps.push(dep)
       // 让dep记录watcher
       dep.addSub(this)
+    }
+  }
+
+  depend() {
+    let i = this.deps.length
+    while(i--) {
+      this.deps[i].depend()
     }
   }
 
@@ -81,7 +107,13 @@ class Watcher {
     // 不要立即去调
     // this.get()
 
-    queueWatcher(this)
+    // 如果是计算属性  实例属性数据一变就需要更新了
+    if (this.lazy) {
+      // dirty 的作用是为了表示一下这个值是否需要更新
+      this.dirty = true
+    } else {
+      queueWatcher(this)
+    }
   }
 
   run() {

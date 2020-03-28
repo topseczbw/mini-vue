@@ -5,6 +5,8 @@
 
 // 状态：data computed watch
 import Observer from "./observer";
+import Watcher from "./watcher";
+import { Dep } from './dep'
 export function initState(vm) {
   let options = vm.$options
 
@@ -13,7 +15,7 @@ export function initState(vm) {
   }
 
   if (options.computed) {
-    initComputed()
+    initComputed(vm, options.computed)
   }
 
   if (options.watch) {
@@ -65,8 +67,47 @@ function proxy(vm, source, key) {
   })
 }
 
-function initComputed() {
+function createComputedGetter(vm, key) {
+  console.log('用户取 computed 值时')
+  // 【source/vue/observe/index.js:84】 这个watcher就是我们定义的计算属性watcher
+  let watcher = vm._watchersComputed[key]
+  // 只有当用户取值时才会调用这个方法
+  return function (vm, key) {
+    if (watcher) {
+      // 如果dirty是false 不需要执行计算属性中的方法
+      if (watcher.dirty) {
+        watcher.evaluate()
+      }
+      //
+      if (Dep.target) {
+        watcher.depend()
+      }
+      return watcher.value
+    }
+  }
+}
 
+function initComputed(vm, computed) {
+  // console.log(vm, computed)
+  // 核心也是要创建一个watcher  而且要存起来
+  // 创建存储计算属性的watcher的对象并放到 vm 上
+  // 将计算属性的配置放到vm上
+  let watchers = vm._watchersComputed = Object.create(null)
+
+  for (let key in computed) {
+    let userDef = computed[key]
+    // 函数可不是用户传入的fn
+    // new Watcher 是什么都不会做 只是给watcher增加了 lazy 和 dirty 两个属性
+    watchers[key] = new Watcher(vm, userDef, () => {}, {
+      // 表示是一个计算属性watcher，而且默认刚开始这个方法不会执行
+      lazy: true
+    })
+
+    // 为了让用户可以使用 this.计算属性 取到值
+    Object.defineProperty(vm, key, {
+      get: createComputedGetter(vm, key)
+    })
+  }
 }
 
 function createWatcher(vm, key, handler, opts) {
