@@ -4,7 +4,7 @@
  */
 import Vue from 'vue'
 import {h} from "../source/vue/vdom/h";
-import {render} from "../source/vue/vdom";
+import {patch, render} from "../source/vue/vdom";
 
 // let vm = new Vue({
 //   el: '#app',
@@ -101,14 +101,113 @@ setTimeout(() => {
 
 
 // todo 虚拟dom
+// let oldVnode = h('div', {id: 'container', key: 1, class: 'main'},
+//   h('span', {style: { color: 'red'}}, 'hello'),
+//   'zf'
+// )
 
 
+// todo diff
 
-let oldVnode = h('div', {id: 'container', key: 1},
-  h('span', {style: { color: 'red'}}, 'hello'),
-  'zf'
+// let oldVnode = h('div', {id: 'container', style: {background: 'red'}},
+//   h('span', {style: { color: 'red'}}, 'hello'),
+//   'zf'
+// )
+// let newVnode = h('div', {id: 'aaaaaa', style: {background: 'yellow'}},
+//   h('span', {style: {color: 'green'}}, 'world'),
+//   'px'
+// )
+//
+// let oldVnode = h('div', {id: 'container', style: {background: 'red'}}
+// )
+// let newVnode = h('div', {id: 'aaaaaa', style: {background: 'yellow'}},
+//   h('span', {style: {color: 'green'}}, 'world'),
+//   'px'
+// )
+
+// let oldVnode = h('div', {id: 'container'}, 'aaaa')
+// let newVnode = h('div', {id: 'container'}, 'bbbb')
+
+
+// 新 vnode 往后添加元素
+// let oldVnode = h('div', {id: 'container'},
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+// )
+// let newVnode = h('div', {id: 'aaaaaa'},
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+//   h('li', {style: { background: '#ccc'}, key: 'e'}, 'e'),
+// )
+
+
+// let oldVnode = h('div', {id: 'container'},
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+// )
+// let newVnode = h('div', {id: 'aaaaaa'},
+//   h('li', {style: { background: '#ccc'}, key: 'e'}, 'e'),
+//   h('li', {style: { background: '#ccc'}, key: 'f'}, 'f'),
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd')
+// )
+
+// let oldVnode = h('div', {id: 'container'},
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+// )
+// let newVnode = h('div', {id: 'aaaaaa'},
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a')
+// )
+
+//
+// let oldVnode = h('div', {id: 'container'},
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+// )
+// let newVnode = h('div', {id: 'aaaaaa'},
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c')
+// )
+
+let oldVnode = h('div', {id: 'container'},
+  h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+  h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+  h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+  h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
 )
+let newVnode = h('div', {id: 'aaaaaa'},
+  h('li', {style: { background: 'pink'}, key: 'e'}, 'e'),
+  h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+  h('li', {style: { background: 'yellow'}, key: 'f'}, 'f'),
+  h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+  h('li', {style: { background: 'blue'}, key: 'n'}, 'n')
+)
+
+// 用新的虚拟节点 和老的节点 作对比 更新真实dom元素
+
 let container = document.getElementById('app')
 
-// console.log(oldVnode)
+console.log(oldVnode)
 render(oldVnode, container)
+//
+setTimeout(() => {
+  patch(oldVnode, newVnode)
+}, 1000)
