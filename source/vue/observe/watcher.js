@@ -140,7 +140,7 @@ function queueWatcher(watcher) {
   if (has[id] == null) {
     has[id] = true
     // 批量
-    queue.push(watcher)
+    queue.push(watche r)
 
     // 延迟清空队列
     // 再此之前  先将 vm 属性修改操作都存起来 使用宏任务 延迟触发

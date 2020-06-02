@@ -6,38 +6,38 @@ import Vue from 'vue'
 import {h} from "../source/vue/vdom/h";
 import {patch, render} from "../source/vue/vdom";
 
-// let vm = new Vue({
-//   el: '#app',
-//   data() {
-//     return {
-//       // Object.defineProperty()
-//       msg: 'hello',
-//       school: {
-//         name: 'zf'
-//       },
-//       arr: [{name: 'zbw'}, 2, 4],
-//       list: [1,2,3],
-//       list2: [[1],2,3]
-//     }
-//   },
-//   computed: {
-//     fullName() {
-//       return `${this.msg} world`
-//     }
-//   },
-//   watch: {
-//     msg(newValue, oldValue) {
-//       console.log(newValue)
-//       console.log(oldValue)
-//     },
-//     msg: {
-//       handler: (newValue, oldValue) => {
-//         console.log(newValue, oldValue)
-//       },
-//       immediate: true
-//     }
-//   }
-// })
+let vm = new Vue({
+  el: '#app',
+  data() {
+    return {
+      // Object.defineProperty()
+      msg: 'hello',
+      school: {
+        name: 'zf'
+      },
+      arr: [{name: 'zbw'}, 2, 4],
+      list: [1,2,3],
+      list2: [[1],2,3]
+    }
+  },
+  computed: {
+    fullName() {
+      return `${this.msg} world`
+    }
+  },
+  watch: {
+    msg(newValue, oldValue) {
+      console.log(newValue)
+      console.log(oldValue)
+    },
+    msg: {
+      handler: (newValue, oldValue) => {
+        console.log(newValue, oldValue)
+      },
+      immediate: true
+    }
+  }
+})
 
 // setTimeout(() => {
 //
@@ -187,27 +187,27 @@ setTimeout(() => {
 //   h('li', {style: { background: 'blue'}, key: 'c'}, 'c')
 // )
 
-let oldVnode = h('div', {id: 'container'},
-  h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
-  h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
-  h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
-  h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
-)
-let newVnode = h('div', {id: 'aaaaaa'},
-  h('li', {style: { background: 'pink'}, key: 'e'}, 'e'),
-  h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
-  h('li', {style: { background: 'yellow'}, key: 'f'}, 'f'),
-  h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
-  h('li', {style: { background: 'blue'}, key: 'n'}, 'n')
-)
-
-// 用新的虚拟节点 和老的节点 作对比 更新真实dom元素
-
-let container = document.getElementById('app')
-
-console.log(oldVnode)
-render(oldVnode, container)
+// let oldVnode = h('div', {id: 'container'},
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'b'}, 'b'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'pink'}, key: 'd'}, 'd'),
+// )
+// let newVnode = h('div', {id: 'aaaaaa'},
+//   h('li', {style: { background: 'pink'}, key: 'e'}, 'e'),
+//   h('li', {style: { background: 'red'}, key: 'a'}, 'a'),
+//   h('li', {style: { background: 'yellow'}, key: 'f'}, 'f'),
+//   h('li', {style: { background: 'blue'}, key: 'c'}, 'c'),
+//   h('li', {style: { background: 'blue'}, key: 'n'}, 'n')
+// )
 //
-setTimeout(() => {
-  patch(oldVnode, newVnode)
-}, 1000)
+// // 用新的虚拟节点 和老的节点 作对比 更新真实dom元素
+//
+// let container = document.getElementById('app')
+//
+// // console.log(oldVnode)
+// render(oldVnode, container)
+// //
+// setTimeout(() => {
+//   patch(oldVnode, newVnode)
+// }, 1000)

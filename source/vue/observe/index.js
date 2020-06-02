@@ -10,6 +10,14 @@ import { Dep } from './dep'
 export function initState(vm) {
   let options = vm.$options
 
+  if(options.props) {
+    initProps(vm)
+  }
+
+  if(options.methods) {
+    initMethods(vm)
+  }
+
   if (options.data) {
     initData(vm)
   }
@@ -21,6 +29,13 @@ export function initState(vm) {
   if (options.watch) {
     initWatch(vm)
   }
+}
+
+function initMethods(vm) {
+}
+
+function initProps() {
+
 }
 
 
@@ -40,6 +55,11 @@ export function observe(data) {
  */
 function initData(vm) {
   let data = vm.$options.data
+
+  // 用户传入的data方法或者对象
+  console.log(data)
+
+  // !!!
   data = vm._data = typeof data === 'function' ? data.call(vm) : data || {}
 
   // 代理 目的改为从vm上直接取值

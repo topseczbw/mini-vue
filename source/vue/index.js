@@ -12,15 +12,45 @@ function Vue(options) {
 
 Vue.prototype._init = function (options) {
   let vm = this
-  // $options 代表用户传入的参数对象
+  // $options 代表用户传入的初始的配置对象
   vm.$options = options
 
   // mvvm原理 需要将数据重新初始化
   initState(vm)
 
+  // 如果传递了el属性，则挂载
   if (vm.$options.el) {
     vm.$mount()
   }
+}
+
+Vue.extend = function (extendOptions) {
+  const Sub = function VueComponent(options) {
+    this._init(options)
+  }
+  Sub.prototype = Object.create(this.prototype)
+  Sub.prototype.constructor = Sub
+
+  // 合并父类和子类的options
+  Sub.options = mergeOptions(this.options, extendOptions)
+
+  return Sub
+}
+function mergeOptions() {
+}
+
+// 合并组件选项、指令、过滤器等
+function mergeAssets(parentVal, childVal) {
+
+  // 以父组件为原型对象，这样的话就可以实现在子组件中找不到时，可以在父组件上找
+  const res = Object.create(parentVal)
+  if (childVal) {
+    for (let key in childVal) {
+      res[key] = childVal[key]
+    }
+  }
+
+  return res
 }
 
 function query(el) {

@@ -13,6 +13,7 @@ export function defineReactive(data, key, value) {
   // todo childOb 专门服务于数组 是数组的那个dep
   let childOb = observe(value)
   // todo 注意：这是一个闭包  由于get、set方法可以获取到 defineReactive 方法作用域中的变量，因此在外部修改属性时， dep 可以一直存活，一直被访问到
+  // 这个dep是给对象用的
   let dep = new Dep()
   Object.defineProperty(data, key, {
     get() {
@@ -71,7 +72,8 @@ class Observer {
     // 对象的依赖 在【source/vue/observe/observer.js:16】闭包中收集
     this.dep = new Dep()
     // 为从data开始的每个对象、数组
-    // 都有一个__ob__属性，返回的就是当前的Observer实例
+    // 为每个属性都增加一个__ob__属性，返回的就是当前的Observer实例
+    // 这样做是为了让数组属性可以获取到Observer实例
     Object.defineProperty(data, '__ob__', {
       get: () => this
     })
